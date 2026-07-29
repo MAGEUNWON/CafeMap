@@ -1,0 +1,76 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-sand-50 text-ink font-sans text-body-1;
+    /* 한글은 어절 단위로 끊어야 읽기 좋다 */
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* 포커스 링은 전역 규칙 하나로 통일 — 컴포넌트마다 다시 정의하지 않는다 */
+  :focus-visible {
+    @apply outline-none ring-2 ring-moss ring-offset-2 ring-offset-sand-50;
+  }
+
+  ::selection {
+    @apply bg-moss-pale text-ink;
+  }
+}
+
+@layer components {
+  /* 페이지 컨테이너 — 데스크톱에서 과하게 늘어지지 않도록 */
+  .container-content {
+    @apply mx-auto w-full max-w-content px-5 sm:px-8;
+  }
+
+  .container-wide {
+    @apply mx-auto w-full max-w-wide px-5 sm:px-8;
+  }
+
+  /* 카드 — 그림자 대신 얇은 테두리로 구분 */
+  .surface {
+    @apply rounded-card border border-line bg-paper;
+  }
+
+  /* 날짜·개수 등 인덱스형 텍스트 */
+  .text-index {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 하단 고정 영역 (iOS safe area) */
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
