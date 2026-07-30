@@ -2,13 +2,15 @@
 import type { CafeRecord } from "~/types/cafe";
 
 /**
- * 지도 마커 — 좌표를 정확히 가리키는 월넛 핀과 카페 이름.
+ * 지도 마커 — 좌표를 가리키는 월넛 리본 배너와 카페 이름.
  *
  * 사진 썸네일이었는데, 여러 장이 겹치면 오히려 어디가 어디인지 알기 어려웠다.
  * 사진은 목록·상세와 선택했을 때 뜨는 카드에서 충분히 보인다.
+ * 흔한 물방울 핀 대신 책갈피 모양을 쓴다 — 기록을 꽂아둔다는 이 앱의 성격에 맞고,
+ * 아래로 뾰족해 위치도 분명하다.
  *
- * 루트를 핀 크기(24×30)로 고정한 이유: 카카오 CustomOverlay 는 콘텐츠 상자
- * 크기로 앵커를 계산한다. 선택·호버·이름 길이로 상자가 커지면 핀 끝이
+ * 루트를 배너 크기(24×30)로 고정한 이유: 카카오 CustomOverlay 는 콘텐츠 상자
+ * 크기로 앵커를 계산한다. 선택·호버·이름 길이로 상자가 커지면 끝점이
  * 좌표에서 밀리므로, 커지는 요소는 전부 흐름 밖(absolute)이나 transform 으로 둔다.
  */
 const props = defineProps<{
@@ -26,10 +28,13 @@ const showLabel = computed(() => props.selected || props.labelVisible);
 
 <template>
   <div :data-cafe-marker="cafe.id" class="relative h-[30px] w-6 touch-none">
-    <!-- 선택 표시 — 핀 머리 뒤에 깔리는 옅은 원반. opacity 로만 토글해 크기는 불변 -->
+    <!--
+      선택 표시 — 배너 뒤에 깔리는 옅은 원반. opacity 로만 토글해 크기는 불변.
+      bottom-0.5 는 원반 중심(2+18=20px)을 배너 안쪽 표식(끝에서 20px)에 맞춘 값이다.
+    -->
     <span
       aria-hidden="true"
-      class="absolute bottom-1.5 left-1/2 h-9 w-9 -translate-x-1/2 rounded-pill bg-moss/25 transition-opacity duration-200 ease-soft"
+      class="absolute bottom-0.5 left-1/2 h-9 w-9 -translate-x-1/2 rounded-pill bg-moss/25 transition-opacity duration-200 ease-soft"
       :class="selected ? 'opacity-100' : 'opacity-0'"
     />
 
@@ -45,7 +50,7 @@ const showLabel = computed(() => props.selected || props.labelVisible);
       @click="emit('select', cafe.id)"
     >
       <!--
-        origin-bottom: 핀 끝을 붙박아 두고 위로만 커지게 한다.
+        origin-bottom: 끝점을 붙박아 두고 위로만 커지게 한다.
         transform 이라 레이아웃 크기가 그대로여서 앵커가 흔들리지 않는다.
       -->
       <span
@@ -60,14 +65,18 @@ const showLabel = computed(() => props.selected || props.labelVisible);
           class="block transition-colors duration-200 ease-soft"
           :class="selected ? 'fill-walnut-deep' : 'fill-walnut'"
         >
-          <!-- 끝점이 뷰박스 바닥 정중앙(12,30)에 오도록 그린다 — 앵커 계산의 전제 -->
+          <!--
+            책갈피 — 위는 각진 어깨, 아래는 뾰족한 끝.
+            끝점이 뷰박스 바닥 정중앙에 오도록 그린다 (앵커 계산의 전제).
+            29.2 인 이유는 테두리 굵기 1.5 의 절반이 바깥으로 나가 30 에 닿기 때문.
+          -->
           <path
-            d="M12 29.2 C12 29.2 20.8 17.6 20.8 11.2 A8.8 8.8 0 1 0 3.2 11.2 C3.2 17.6 12 29.2 12 29.2 Z"
+            d="M5.4 2 h13.2 a1.6 1.6 0 0 1 1.6 1.6 v14.4 L12 29.2 L3.8 18 V3.6 A1.6 1.6 0 0 1 5.4 2 Z"
             class="stroke-paper"
-            stroke-width="1.6"
+            stroke-width="1.5"
             stroke-linejoin="round"
           />
-          <circle cx="12" cy="11.2" r="3.1" class="fill-paper" />
+          <circle cx="12" cy="10" r="3" class="fill-paper" />
         </svg>
       </span>
     </button>
