@@ -158,5 +158,12 @@ export function createLocalStorageCafeRepository(): CafeRepository {
       save(records, nextIdOf(records));
       return records;
     },
+
+    async usedBytes() {
+      if (!isBrowser()) return null;
+      // 브라우저 한도는 대체로 UTF-16 기준이라 문자 수 × 2 로 잡는다
+      const raw = localStorage.getItem(STORAGE_KEY) ?? "";
+      return raw.length * 2;
+    },
   };
 }

@@ -19,6 +19,11 @@ export interface CafeRepository {
   exportAll(): Promise<CafeBackup>;
   /** 백업 가져오기 — 통째로 갈아끼운다 */
   replaceAll(records: CafeRecord[]): Promise<CafeRecord[]>;
+  /**
+   * 저장에 쓰고 있는 바이트 수. 한도가 있는 저장소에서만 뜻이 있다.
+   * 백엔드 구현은 null 을 돌려주면 화면이 알아서 감춘다.
+   */
+  usedBytes(): Promise<number | null>;
 }
 
 /**

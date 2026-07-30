@@ -63,6 +63,34 @@ export default defineNuxtConfig({
         },
         { name: "theme-color", content: "#FAF7F1" },
         { name: "format-detection", content: "telephone=no" },
+
+        // 홈 화면에 추가했을 때 사파리 UI 없이 앱처럼 뜨게 한다.
+        // 서비스 워커는 필요 없다 — 매니페스트와 아이콘이면 된다.
+        { name: "apple-mobile-web-app-capable", content: "yes" },
+        { name: "mobile-web-app-capable", content: "yes" },
+        // 없으면 홈 화면 라벨이 title 전체("CafeMap — 내가 …")로 잘려 나온다
+        { name: "apple-mobile-web-app-title", content: "카페맵" },
+        // black-translucent 로 두면 콘텐츠가 상태바 밑으로 들어가
+        // sticky top-0 헤더가 잘린다
+        {
+          name: "apple-mobile-web-app-status-bar-style",
+          content: "default",
+        },
+      ],
+      link: [
+        { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+        {
+          rel: "icon",
+          type: "image/png",
+          sizes: "192x192",
+          href: "/icon-192.png",
+        },
+        {
+          rel: "apple-touch-icon",
+          sizes: "180x180",
+          href: "/apple-touch-icon.png",
+        },
+        { rel: "manifest", href: "/manifest.webmanifest" },
       ],
     },
   },

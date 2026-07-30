@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!--
+    앱 아이콘. 색은 app/tokens/colors.ts 의 walnut(#4A3B2E) 과 sand50(#FAF7F1).
+    iOS 가 알아서 모서리를 깎으므로 여기서는 사각형을 꽉 채운다.
+    안드로이드가 원형으로 잘라도 살아남도록 형태를 중앙 80%(반지름 205) 안에 둔다.
+  -->
+  <rect width="512" height="512" fill="#4A3B2E" />
+
+  <!-- 핀 실루엣이 위로 치우쳐 보여 시각 중심에 맞춰 내린다 -->
+  <g transform="translate(0 30)">
+    <!-- 지도 핀 — 끝점이 아래를 향한다. CafeMapMarker 의 핀과 같은 실루엣 -->
+    <path
+      d="M256 396 C256 396 366 249 366 168 A110 110 0 1 0 146 168 C146 249 256 396 256 396 Z"
+      fill="#FAF7F1"
+    />
+
+    <!-- 핀 안의 커피잔 — 잔과 손잡이만 남긴 단순형 -->
+    <path
+      d="M196 118 h104 v52 a52 52 0 0 1 -52 52 a52 52 0 0 1 -52 -52 Z"
+      fill="#4A3B2E"
+    />
+    <path
+      d="M306 130 h14 a26 26 0 0 1 0 52 h-14"
+      fill="none"
+      stroke="#4A3B2E"
+      stroke-width="16"
+      stroke-linecap="round"
+    />
+  </g>
+</svg>

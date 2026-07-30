@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!--
+    탭 아이콘. 16px 로 줄어들면 커피잔 디테일이 뭉개지므로 핀 실루엣과
+    가운데 구멍만 남긴다. 색은 앱 아이콘과 같다.
+  -->
+  <rect width="512" height="512" rx="96" fill="#4A3B2E" />
+  <g transform="translate(0 30)">
+    <path
+      d="M256 396 C256 396 366 249 366 168 A110 110 0 1 0 146 168 C146 249 256 396 256 396 Z"
+      fill="#FAF7F1"
+    />
+    <circle cx="256" cy="164" r="46" fill="#4A3B2E" />
+  </g>
+</svg>

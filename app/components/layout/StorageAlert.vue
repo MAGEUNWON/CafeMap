@@ -46,7 +46,7 @@ async function retry() {
         <p class="min-w-0 flex-1 text-body-2 text-ink">
           {{ store.error }}
           <span class="text-ink-soft">
-            — 저장된 내용은 지우지 않았음. 새 기록을 쓰기 전에 확인이 필요함
+            — 저장된 내용은 지우지 않았음. 설정에서 백업 파일을 가져올 수 있음
           </span>
         </p>
 
@@ -59,6 +59,7 @@ async function retry() {
           >
             다시 시도
           </UiButton>
+          <UiButton to="/settings" size="sm" variant="ghost">설정</UiButton>
           <button
             type="button"
             class="flex h-9 w-9 items-center justify-center rounded-pill text-ink-soft transition-colors duration-150 ease-soft hover:bg-sand-200"

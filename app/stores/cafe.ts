@@ -153,6 +153,10 @@ export const useCafeStore = defineStore("cafe", {
       return repository.exportAll();
     },
 
+    async usedBytes(): Promise<number | null> {
+      return repository.usedBytes();
+    },
+
     /** 백업 가져오기 — 통째로 교체한다 */
     async importBackup(records: CafeRecord[]): Promise<void> {
       this.records = await repository.replaceAll(records);

@@ -61,6 +61,7 @@ JavaScript 키는 등록한 도메인에서만 동작해 브라우저에 노출�
 | `/cafes/new`       | 카페 기록하기                                                          |
 | `/cafes/[id]`      | 카페 상세 — 수정·삭제(확인 모달)                                       |
 | `/cafes/[id]/edit` | 카페 기록 수정 (등록 폼 재사용)                                        |
+| `/settings`        | 사용량, 기록 백업 내보내기·가져오기                                    |
 
 ## 구조
 
@@ -111,3 +112,9 @@ pages / components → stores/cafe.ts → repositories → localStorage
   선택한 카페 이름은 겹쳐도 항상 보이고, 줌인하면 화면에 남은 마커는 전부 이름이 뜬다.
 - `localStorage` 는 `onNuxtReady` 이후(`app/plugins/cafe.client.ts`) 읽는다.
   읽기 전에는 스켈레톤이 뜬다.
+- 백업 파일과 저장값은 **같은 형식**이라, 내보낸 파일을 그대로 다시 가져올 수 있다.
+  가져오기는 교체(replace)만 지원하고, 덮어쓰기 전에 지금 기록을 자동으로 먼저 내보낸다.
+- 홈 화면에 추가하면 앱처럼 뜬다(`public/manifest.webmanifest`). 서비스 워커는 쓰지 않는다.
+  아이콘은 `public/icon.svg` 한 장에서 뽑는다 — 새 의존성 없이 Playwright 로 렌더링했다.
+- `app/plugins/00.kill-sw.client.ts` 는 **개발 환경 전용**이다. 나중에 PWA 를 붙이려면
+  이 플러그인을 먼저 지워야 등록↔해제 무한 루프를 피한다.
