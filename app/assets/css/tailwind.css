@@ -7,6 +7,9 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    /* 어떤 요소가 새어 나가도 페이지 전체 가로 스크롤은 만들지 않는다 */
+    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   body {

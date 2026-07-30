@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { IconHome2, IconMapPin, IconPhoto, IconPlus } from "@tabler/icons-vue";
+import { IconMapPin, IconPhoto, IconPlus } from "@tabler/icons-vue";
 
 const route = useRoute();
 
 const items = [
-  { to: "/", label: "홈", icon: IconHome2 },
-  { to: "/map", label: "지도", icon: IconMapPin },
+  { to: "/", label: "지도", icon: IconMapPin },
   { to: "/cafes", label: "기록", icon: IconPhoto },
   { to: "/cafes/new", label: "추가", icon: IconPlus },
 ];

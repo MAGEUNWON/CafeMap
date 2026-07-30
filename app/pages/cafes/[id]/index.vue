@@ -35,10 +35,12 @@ async function onRemove() {
   }
 }
 
-// 지도 앱 연결은 다음 단계 — 지금은 눌리는 것까지만
-function onOpenInMapApp() {
-  toast.success("지도 앱 연결은 아직 준비 중");
-}
+// 카카오맵 URL 링크 — 앱이 설치돼 있으면 앱으로, 없으면 모바일 웹으로 열린다
+const kakaoMapUrl = computed(() =>
+  cafe.value
+    ? `https://map.kakao.com/link/map/${encodeURIComponent(cafe.value.name)},${cafe.value.latitude},${cafe.value.longitude}`
+    : "",
+);
 </script>
 
 <template>
@@ -100,7 +102,7 @@ function onOpenInMapApp() {
             <dt class="w-[84px] shrink-0 text-caption text-ink-faint">
               다녀온 날
             </dt>
-            <dd class="text-body-1 text-index text-ink">
+            <dd class="min-w-0 text-body-1 text-index text-ink">
               {{ formatDateDot(cafe.visitedAt) }}
             </dd>
           </div>
@@ -112,7 +114,7 @@ function onOpenInMapApp() {
             <dt class="w-[84px] shrink-0 pt-0.5 text-caption text-ink-faint">
               기억한 분위기
             </dt>
-            <dd class="flex flex-wrap gap-1.5">
+            <dd class="flex min-w-0 flex-wrap gap-1.5">
               <AtmosphereTag
                 v-for="tag in cafe.atmosphere"
                 :key="tag"
@@ -125,7 +127,7 @@ function onOpenInMapApp() {
             <dt class="w-[84px] shrink-0 text-caption text-ink-faint">
               남겨둔 메모
             </dt>
-            <dd class="text-body-1 text-ink">{{ cafe.memo }}</dd>
+            <dd class="min-w-0 text-body-1 text-ink">{{ cafe.memo }}</dd>
           </div>
         </dl>
 
@@ -141,7 +143,8 @@ function onOpenInMapApp() {
             variant="outline"
             size="sm"
             class="mt-3"
-            @click="onOpenInMapApp"
+            :to="kakaoMapUrl"
+            target="_blank"
           >
             <IconExternalLink :size="16" :stroke-width="1.6" />
             지도에서 보기

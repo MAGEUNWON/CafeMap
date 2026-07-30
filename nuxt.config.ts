@@ -45,7 +45,6 @@ export default defineNuxtConfig({
     { path: "~/components/layout", prefix: "Layout" },
     // 파일명이 이미 역할을 담고 있어 접두사를 붙이지 않는다 (CafeMap, AtmosphereTag ...)
     { path: "~/components/cafe", pathPrefix: false },
-    { path: "~/components/landing", pathPrefix: false },
   ],
 
   imports: { dirs: ["composables"] },

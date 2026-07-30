@@ -55,8 +55,8 @@ JavaScript 키는 등록한 도메인에서만 동작해 브라우저에 노출�
 
 | 라우트             | 설명                                                                   |
 | ------------------ | ---------------------------------------------------------------------- |
-| `/`                | 랜딩 — 히어로(실제 지도+기록 카드 미리보기), 핵심 기능, 최근 기록, CTA |
-| `/map`             | 내 카페 지도 — 모바일은 지도/목록 전환, 데스크톱은 좌 목록·우 지도     |
+| `/`                | 내 카페 지도(홈) — 모바일은 지도/목록 전환, 데스크톱은 좌 목록·우 지도 |
+| `/map`             | `/` 로 리다이렉트 (옛 링크 호환)                                       |
 | `/cafes`           | 다녀온 카페 — 사진 카드 그리드, 분위기 필터, 정렬                      |
 | `/cafes/new`       | 카페 기록하기                                                          |
 | `/cafes/[id]`      | 카페 상세 — 수정·삭제(확인 모달)                                       |
@@ -69,7 +69,6 @@ JavaScript 키는 등록한 도메인에서만 동작해 브라우저에 노출�
 app/
 ├─ tokens/          디자인 토큰(색·타이포·radius·shadow) → tailwind.config.ts 로 주입
 ├─ types/cafe.ts    도메인 타입 + 분위기 라벨 (단일 정의처)
-├─ data/            랜딩 장식용 예시 카페 8곳 (저장소는 쓰지 않는다)
 ├─ repositories/    저장소 계약 + localStorage 구현
 ├─ stores/          Pinia — 화면이 데이터에 닿는 유일한 지점
 ├─ core/            format(날짜) · backup/schema(저장값 검증) · map/kakaoSdk(SDK 로더)
@@ -77,8 +76,7 @@ app/
 ├─ components/
 │  ├─ ui/           UiButton, UiModal, UiToaster … (프리픽스 `Ui`)
 │  ├─ layout/       AppHeader, MobileBottomNavigation (프리픽스 `Layout`)
-│  ├─ cafe/         CafeMap, CafeMapMarker, CafeCard, CafeForm …
-│  └─ landing/      랜딩 섹션
+│  └─ cafe/         CafeMap, CafeMapMarker, CafeCard, CafeForm …
 └─ pages/
 ```
 
@@ -100,8 +98,8 @@ pages / components → stores/cafe.ts → repositories → localStorage
 
 ## 메모
 
-- `app/data/mockCafes.ts` 는 **랜딩 장식 전용**이다. 저장소는 시드를 심지 않는다 —
-  처음 열면 빈 상태로 시작한다.
+- 홈(`/`)은 곧 지도다. 로그인 없는 개인용 앱이라 소개용 랜딩은 두지 않는다 —
+  옛 `/map` 주소는 `/` 로 리다이렉트된다. 저장소는 시드를 심지 않아 처음 열면 빈 상태로 시작한다.
 - 저장값이 깨져도 **덮어쓰지 않는다.** 원본은 그대로 두고 사본을
   `cafemap.records.corrupt.<시각>` 으로 옮긴 뒤 경고 배너를 띄운다.
 - 저장 포맷은 봉투(`app/types/backup.ts`). 배열만 있던 예전 값도 읽는다.
