@@ -3,16 +3,16 @@ import type { CafeRecord } from "~/types/cafe";
 /**
  * 최초 실행 시 채워지는 시드 데이터.
  * 사진은 전부 public/photos 의 추상 플레이스홀더 — 실제 카페 사진이 아니다.
- * 좌표는 성수·서울숲 일대 안에 흩어지도록 잡았다.
+ * 좌표는 성수·서울숲 일대. 메모와 분위기는 예시용이다.
  */
 export const mockCafes: CafeRecord[] = [
   {
     id: 1,
     name: "마를리",
-    address: "서울 성동구 성수동2가 연무장길 45",
+    address: "서울 성동구 연무장길 47",
     district: "성수동2가",
-    latitude: 37.5462,
-    longitude: 127.0552,
+    latitude: 37.54278,
+    longitude: 127.054745,
     photoUrl: "/photos/cafe-01.svg",
     atmosphere: ["quiet", "work", "coffee"],
     memo: "창가 2인석이 제일 좋았음",
@@ -22,10 +22,10 @@ export const mockCafes: CafeRecord[] = [
   {
     id: 2,
     name: "자연도 소금빵 성수점",
-    address: "서울 성동구 성수동1가 아차산로 60",
+    address: "서울 성동구 아차산로 60",
     district: "성수동1가",
-    latitude: 37.5438,
-    longitude: 127.0512,
+    latitude: 37.5452,
+    longitude: 127.0503,
     photoUrl: "/photos/cafe-02.svg",
     atmosphere: ["waiting", "dessert", "revisit"],
     memo: "오후 3시 넘으면 소금빵 다 나감",
@@ -35,10 +35,10 @@ export const mockCafes: CafeRecord[] = [
   {
     id: 3,
     name: "오우드 성수",
-    address: "서울 성동구 성수동2가 성수이로 84",
+    address: "서울 성동구 성수이로24길 36",
     district: "성수동2가",
-    latitude: 37.5405,
-    longitude: 127.0588,
+    latitude: 37.544062,
+    longitude: 127.061879,
     photoUrl: "/photos/cafe-03.svg",
     atmosphere: ["moody", "photo", "spacious"],
     memo: "2층 계단 쪽 조명이 예뻤다",
@@ -48,10 +48,10 @@ export const mockCafes: CafeRecord[] = [
   {
     id: 4,
     name: "센터커피 서울숲점",
-    address: "서울 성동구 성수동1가 서울숲2길 28",
+    address: "서울 성동구 서울숲길 30",
     district: "서울숲",
-    latitude: 37.5448,
-    longitude: 127.0421,
+    latitude: 37.5479,
+    longitude: 127.041,
     photoUrl: "/photos/cafe-04.svg",
     atmosphere: ["spacious", "talk", "coffee"],
     memo: "테라스 자리에서 서울숲이 보임",
@@ -61,10 +61,10 @@ export const mockCafes: CafeRecord[] = [
   {
     id: 5,
     name: "온화",
-    address: "서울 성동구 성수동2가 성수일로 22",
+    address: "서울 성동구 성수일로 22",
     district: "성수동2가",
-    latitude: 37.5378,
-    longitude: 127.0546,
+    latitude: 37.5432,
+    longitude: 127.0578,
     photoUrl: "/photos/cafe-05.svg",
     atmosphere: ["quiet", "moody"],
     memo: "말소리가 하나도 안 들리는 곳",
@@ -74,10 +74,10 @@ export const mockCafes: CafeRecord[] = [
   {
     id: 6,
     name: "브릭원 서울숲",
-    address: "서울 성동구 성수동1가 왕십리로 83",
+    address: "서울 성동구 왕십리로 83",
     district: "서울숲",
-    latitude: 37.5492,
-    longitude: 127.0398,
+    latitude: 37.5468,
+    longitude: 127.0435,
     photoUrl: "/photos/cafe-06.svg",
     atmosphere: ["work", "spacious", "revisit"],
     memo: "콘센트 자리 많고 오래 앉아 있기 편함",
@@ -87,10 +87,10 @@ export const mockCafes: CafeRecord[] = [
   {
     id: 7,
     name: "노트 뚝섬",
-    address: "서울 성동구 성수동1가 뚝섬로1길 5",
+    address: "서울 성동구 뚝섬로1길 5",
     district: "뚝섬",
-    latitude: 37.5372,
-    longitude: 127.0462,
+    latitude: 37.541,
+    longitude: 127.0498,
     photoUrl: "/photos/cafe-07.svg",
     atmosphere: ["talk", "dessert"],
     memo: "둘이 앉아 오래 얘기하기 좋았음",
@@ -100,10 +100,10 @@ export const mockCafes: CafeRecord[] = [
   {
     id: 8,
     name: "리버사이드 성수",
-    address: "서울 성동구 성수동2가 광나루로 130",
+    address: "서울 성동구 광나루로 130",
     district: "성수동2가",
-    latitude: 37.5426,
-    longitude: 127.0625,
+    latitude: 37.5395,
+    longitude: 127.0605,
     photoUrl: "/photos/cafe-08.svg",
     atmosphere: ["photo", "moody", "coffee"],
     memo: "해 질 무렵에 다시 가보기",

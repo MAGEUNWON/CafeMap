@@ -25,6 +25,14 @@ export default defineNuxtConfig({
 
   imports: { dirs: ["composables"] },
 
+  runtimeConfig: {
+    public: {
+      // NUXT_PUBLIC_KAKAO_MAP_KEY 로 주입. 카카오 JavaScript 키는 도메인 제한이
+      // 걸려 있어 브라우저에 노출되는 게 정상이지만 레포에는 올리지 않는다.
+      kakaoMapKey: "",
+    },
+  },
+
   typescript: { strict: true, typeCheck: false },
 
   app: {

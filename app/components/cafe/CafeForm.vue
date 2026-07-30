@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { todayInputValue } from "~/core/format";
-import { fallbackCoordinate } from "~/core/map/projection";
 import {
   ATMOSPHERE_OPTIONS,
   type Atmosphere,
@@ -41,9 +40,27 @@ const submitLabel = computed(() =>
   props.mode === "create" ? "기록 저장" : "수정 저장",
 );
 
-const locationSummary = computed(() =>
-  district.value ? `${district.value} 근처로 지도에 표시됨` : "",
+/** 좌표는 검색 결과를 골랐을 때만 생긴다 */
+const hasCoordinate = computed(
+  () => latitude.value !== 0 && longitude.value !== 0,
 );
+
+const locationSummary = computed(() =>
+  hasCoordinate.value && district.value
+    ? `${district.value} 위치로 지도에 표시됨`
+    : "",
+);
+
+/** 고른 장소의 주소 — 사용자가 이 값을 손대면 좌표를 버린다 */
+const pickedAddress = ref(props.initial?.address ?? "");
+
+watch(locationQuery, (value) => {
+  if (value === pickedAddress.value) return;
+  // 검색 결과를 고르지 않고 직접 고쳤으면 예전 좌표를 그대로 쓰면 안 된다
+  latitude.value = 0;
+  longitude.value = 0;
+  district.value = "";
+});
 
 /** 이름 칸에서 장소를 고르면 위치까지 한 번에 채운다 */
 function onNamePlaceSelect(place: PlaceSuggestion) {
@@ -57,6 +74,7 @@ function onLocationPlaceSelect(place: PlaceSuggestion) {
 }
 
 function applyPlace(place: PlaceSuggestion) {
+  pickedAddress.value = place.address;
   locationQuery.value = place.address;
   district.value = place.district;
   latitude.value = place.latitude;
@@ -72,7 +90,8 @@ function toggleAtmosphere(tag: Atmosphere) {
 
 function validate(): boolean {
   nameError.value = name.value.trim() ? "" : "카페 이름을 입력해줘";
-  locationError.value = locationQuery.value.trim() ? "" : "위치를 선택해줘";
+  // 지도에 올리려면 좌표가 있어야 한다 — 검색 결과에서 고른 장소만 통과
+  locationError.value = hasCoordinate.value ? "" : "위치를 선택해줘";
   return !nameError.value && !locationError.value;
 }
 
@@ -80,19 +99,13 @@ function onSubmit() {
   if (!validate()) return;
 
   const address = locationQuery.value.trim();
-  // 검색 결과를 고르지 않고 직접 적었으면 좌표를 임시로 만들어 지도에 올린다
-  const coordinate =
-    latitude.value && longitude.value
-      ? { latitude: latitude.value, longitude: longitude.value }
-      : fallbackCoordinate(address);
 
   emit("submit", {
     name: name.value.trim(),
     address,
-    district:
-      district.value.trim() || address.split(" ").slice(-1)[0] || address,
-    latitude: coordinate.latitude,
-    longitude: coordinate.longitude,
+    district: district.value.trim() || address,
+    latitude: latitude.value,
+    longitude: longitude.value,
     photoUrl: photoUrl.value,
     atmosphere: atmosphere.value,
     memo: memo.value.trim(),
@@ -108,6 +121,7 @@ function onSubmit() {
         v-model="name"
         label="카페 이름"
         placeholder="카페 이름 검색"
+        category="cafe"
         required
         :error="nameError"
         @select="onNamePlaceSelect"
@@ -146,7 +160,7 @@ function onSubmit() {
         placeholder="기억해두고 싶은 점"
       />
 
-      <UiTextField v-model="visitedAt" label="방문한 날" type="date" />
+      <UiDateField v-model="visitedAt" label="방문한 날" />
     </div>
 
     <!-- 모바일에서는 하단 고정, 넓은 화면에서는 폼 끝에 붙는다 -->

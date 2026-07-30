@@ -37,7 +37,10 @@ onBeforeUnmount(() => store.select(null));
 </script>
 
 <template>
-  <div class="flex min-h-0 flex-1 flex-col">
+  <!-- 데스크톱은 목록이 길어져도 지도가 뷰포트를 넘지 않도록 높이를 묶는다 (헤더 4rem) -->
+  <div
+    class="flex min-h-0 flex-1 flex-col lg:h-[calc(100dvh-4rem)] lg:flex-none lg:overflow-hidden"
+  >
     <div class="container-content pt-7">
       <div class="flex items-end justify-between gap-4">
         <div>
