@@ -11,7 +11,7 @@ import { useToastStore } from "~/stores/toast";
 import type { CafeRecord } from "~/types/cafe";
 
 definePageMeta({ layout: "default" });
-useHead({ title: "설정 — CafeMap" });
+useHead({ title: "설정 — Cafe Pin" });
 
 const store = useCafeStore();
 const toast = useToastStore();

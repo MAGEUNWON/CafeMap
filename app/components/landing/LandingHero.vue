@@ -16,9 +16,7 @@ const highlighted = mockCafes[0];
       class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-center lg:gap-14"
     >
       <div>
-        <h1 class="text-display text-ink sm:text-display-lg">
-          내가 다녀온 카페<br />기억하기
-        </h1>
+        <h1 class="text-display text-ink sm:text-display-lg">Cafe Pin</h1>
         <p class="mt-5 max-w-[26rem] text-body-1 text-ink-soft">
           이름, 위치, 사진, 분위기까지 한곳에 남겨두기
         </p>

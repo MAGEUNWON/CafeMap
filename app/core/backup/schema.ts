@@ -130,11 +130,11 @@ export function parseBackup(raw: string): ParsedBackup {
   }
 
   if (!isObject(parsed)) {
-    throw new BackupParseError("notObject", "카페맵 백업 형식이 아님");
+    throw new BackupParseError("notObject", "Cafe Pin 백업 형식이 아님");
   }
 
   if (parsed.app !== BACKUP_APP) {
-    throw new BackupParseError("foreignApp", "카페맵에서 만든 파일이 아님");
+    throw new BackupParseError("foreignApp", "Cafe Pin에서 만든 파일이 아님");
   }
 
   if (typeof parsed.schema === "number" && parsed.schema > CURRENT_SCHEMA) {

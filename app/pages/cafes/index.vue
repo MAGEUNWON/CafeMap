@@ -3,7 +3,7 @@ import { useCafeStore } from "~/stores/cafe";
 import { cafeSortLabel, type Atmosphere, type CafeSort } from "~/types/cafe";
 
 definePageMeta({ layout: "default" });
-useHead({ title: "다녀온 카페 — CafeMap" });
+useHead({ title: "다녀온 카페 — Cafe Pin" });
 
 const store = useCafeStore();
 

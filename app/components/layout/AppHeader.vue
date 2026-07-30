@@ -23,9 +23,9 @@ function isActive(to: string): boolean {
       <NuxtLink
         to="/"
         class="text-title-3 tracking-tight text-ink"
-        aria-label="CafeMap 홈"
+        aria-label="Cafe Pin 홈"
       >
-        CafeMap
+        Cafe Pin
       </NuxtLink>
 
       <nav class="hidden sm:block" aria-label="주요 메뉴">

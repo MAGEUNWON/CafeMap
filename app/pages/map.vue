@@ -4,7 +4,7 @@ import { useCafeStore } from "~/stores/cafe";
 import type { Atmosphere } from "~/types/cafe";
 
 definePageMeta({ layout: "default" });
-useHead({ title: "내 카페 지도 — CafeMap" });
+useHead({ title: "내 카페 지도 — Cafe Pin" });
 
 const store = useCafeStore();
 

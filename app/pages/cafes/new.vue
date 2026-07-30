@@ -4,7 +4,7 @@ import { useToastStore } from "~/stores/toast";
 import type { CafeInput } from "~/types/cafe";
 
 definePageMeta({ layout: "form" });
-useHead({ title: "카페 기록하기 — CafeMap" });
+useHead({ title: "카페 기록하기 — Cafe Pin" });
 
 const store = useCafeStore();
 const toast = useToastStore();

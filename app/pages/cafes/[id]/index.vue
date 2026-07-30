@@ -18,7 +18,7 @@ const confirmOpen = ref(false);
 const removing = ref(false);
 
 useHead(() => ({
-  title: cafe.value ? `${cafe.value.name} — CafeMap` : "카페 기록 — CafeMap",
+  title: cafe.value ? `${cafe.value.name} — Cafe Pin` : "카페 기록 — Cafe Pin",
 }));
 
 async function onRemove() {
