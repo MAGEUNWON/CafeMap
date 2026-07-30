@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { createLocalStorageCafeRepository } from "~/repositories/localStorageCafeRepository";
 import type { CafeRepository } from "~/repositories/cafeRepository";
+import type { CafeBackup } from "~/types/backup";
 import type { Atmosphere, CafeInput, CafeRecord, CafeSort } from "~/types/cafe";
 
 // 백엔드가 붙으면 이 한 줄을 createApiCafeRepository() 로 바꾸면 된다
@@ -74,12 +75,26 @@ export const useCafeStore = defineStore("cafe", {
       this.error = null;
       try {
         this.records = await repository.list();
-        this.isHydrated = true;
       } catch (err) {
+        // 읽기에 실패해도 화면은 진행시킨다. 예전에는 isHydrated 가 false 로
+        // 남아 스켈레톤이 영원히 돌았다 — hydrate 는 한 번만 불리므로.
         this.error = messageOf(err);
+        this.records = [];
       } finally {
+        this.isHydrated = true;
         this.isLoading = false;
       }
+    },
+
+    /** 저장소 오류 배너의 "다시 시도" */
+    async retryHydrate() {
+      this.isHydrated = false;
+      this.error = null;
+      await this.hydrate();
+    },
+
+    dismissError() {
+      this.error = null;
     },
 
     byId(id: number): CafeRecord | null {
@@ -131,6 +146,18 @@ export const useCafeStore = defineStore("cafe", {
     resetFilters() {
       this.keyword = "";
       this.activeTags = [];
+    },
+
+    /** 백업 파일로 내보낼 현재 저장소 전체 */
+    async exportBackup(): Promise<CafeBackup> {
+      return repository.exportAll();
+    },
+
+    /** 백업 가져오기 — 통째로 교체한다 */
+    async importBackup(records: CafeRecord[]): Promise<void> {
+      this.records = await repository.replaceAll(records);
+      this.selectedId = null;
+      this.error = null;
     },
   },
 });

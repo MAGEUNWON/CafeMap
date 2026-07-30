@@ -1,3 +1,4 @@
+import type { CafeBackup } from "~/types/backup";
 import type { CafeInput, CafeRecord } from "~/types/cafe";
 
 /**
@@ -14,11 +15,25 @@ export interface CafeRepository {
   create(input: CafeInput): Promise<CafeRecord>;
   update(id: number, input: CafeInput): Promise<CafeRecord>;
   remove(id: number): Promise<void>;
+  /** 백업 내보내기 */
+  exportAll(): Promise<CafeBackup>;
+  /** 백업 가져오기 — 통째로 갈아끼운다 */
+  replaceAll(records: CafeRecord[]): Promise<CafeRecord[]>;
 }
 
-/** 저장 용량 초과처럼 사용자에게 알려야 하는 실패 */
+/**
+ * 사용자에게 알려야 하는 저장소 실패.
+ *
+ * code 로 나눠 두는 이유: "용량이 가득 참"과 "브라우저가 막음"과 "값이 깨짐"은
+ * 사용자가 해야 할 일이 완전히 다르다. 예전에는 전부 "용량 부족"으로 뭉쳐 있었다.
+ */
+export type CafeStorageErrorCode = "quota" | "blocked" | "corrupt" | "notfound";
+
 export class CafeStorageError extends Error {
-  constructor(message: string) {
+  constructor(
+    message: string,
+    readonly code: CafeStorageErrorCode,
+  ) {
     super(message);
     this.name = "CafeStorageError";
   }

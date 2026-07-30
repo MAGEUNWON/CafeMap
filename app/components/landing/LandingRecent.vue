@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { IconArrowRight } from "@tabler/icons-vue";
-import { mockCafes } from "~/data/mockCafes";
 import { useCafeStore } from "~/stores/cafe";
 
 const store = useCafeStore();
 
-/** 하이드레이션 전에는 시드로 채워 첫 화면이 비지 않게 한다 */
-const cafes = computed(() =>
-  (store.isHydrated ? store.recent : mockCafes).slice(0, 4),
-);
+// 하이드레이션 전에 예시로 채우면 남의 카페가 내 기록인 것처럼 잠깐 떴다가
+// 사라진다. 저장소를 읽을 때까지는 스켈레톤을 둔다.
+const cafes = computed(() => store.recent.slice(0, 4));
 </script>
 
 <template>
@@ -30,8 +28,20 @@ const cafes = computed(() =>
       </NuxtLink>
     </header>
 
+    <div
+      v-if="!store.isHydrated"
+      class="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4"
+    >
+      <UiSkeleton
+        v-for="n in 4"
+        :key="n"
+        rounded="card"
+        class="aspect-[4/3] w-full"
+      />
+    </div>
+
     <ul
-      v-if="cafes.length"
+      v-else-if="cafes.length"
       class="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4"
     >
       <li v-for="cafe in cafes" :key="cafe.id">
