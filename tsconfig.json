@@ -1,6 +1,7 @@
 {
   "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
+    "types": ["kakao.maps.d.ts"],
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
