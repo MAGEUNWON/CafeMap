@@ -57,10 +57,6 @@ function isActive(to: string): boolean {
         >
           <IconSettings :size="19" :stroke-width="1.6" />
         </NuxtLink>
-
-        <UiButton to="/cafes/new" size="sm" class="hidden sm:inline-flex">
-          카페 기록하기
-        </UiButton>
       </div>
     </div>
   </header>
