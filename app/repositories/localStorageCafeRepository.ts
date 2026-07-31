@@ -153,9 +153,9 @@ export function createLocalStorageCafeRepository(): CafeRepository {
       return read();
     },
 
-    async replaceAll(records: CafeRecord[]) {
+    async replaceAll(records: CafeRecord[], nextId?: number) {
       // 지우고 쓰지 않는다. setItem 한 번이라 실패하면 기존 값이 그대로 남는다
-      save(records, nextIdOf(records));
+      save(records, Math.max(nextId ?? 0, nextIdOf(records)));
       return records;
     },
 

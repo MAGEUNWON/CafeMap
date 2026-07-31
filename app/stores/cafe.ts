@@ -1,11 +1,21 @@
 import { defineStore } from "pinia";
+import { mergeRecords } from "~/core/backup/merge";
+import { BACKEND_ENABLED } from "~/core/supabase";
 import { createLocalStorageCafeRepository } from "~/repositories/localStorageCafeRepository";
+import { createSupabaseCafeRepository } from "~/repositories/supabaseCafeRepository";
 import type { CafeRepository } from "~/repositories/cafeRepository";
 import type { CafeBackup } from "~/types/backup";
 import type { Atmosphere, CafeInput, CafeRecord, CafeSort } from "~/types/cafe";
 
-// 백엔드가 붙으면 이 한 줄을 createApiCafeRepository() 로 바꾸면 된다
-const repository: CafeRepository = createLocalStorageCafeRepository();
+// 지연 생성 — supabase 쪽은 런타임 설정(useRuntimeConfig)이 필요해
+// 모듈 import 시점에는 만들 수 없다
+let instance: CafeRepository | null = null;
+function repository(): CafeRepository {
+  instance ??= BACKEND_ENABLED
+    ? createSupabaseCafeRepository()
+    : createLocalStorageCafeRepository();
+  return instance;
+}
 
 interface CafeState {
   records: CafeRecord[];
@@ -74,7 +84,7 @@ export const useCafeStore = defineStore("cafe", {
       this.isLoading = true;
       this.error = null;
       try {
-        this.records = await repository.list();
+        this.records = await repository().list();
       } catch (err) {
         // 읽기에 실패해도 화면은 진행시킨다. 예전에는 isHydrated 가 false 로
         // 남아 스켈레톤이 영원히 돌았다 — hydrate 는 한 번만 불리므로.
@@ -102,13 +112,13 @@ export const useCafeStore = defineStore("cafe", {
     },
 
     async create(input: CafeInput): Promise<CafeRecord> {
-      const record = await repository.create(input);
+      const record = await repository().create(input);
       this.records = [record, ...this.records];
       return record;
     },
 
     async update(id: number, input: CafeInput): Promise<CafeRecord> {
-      const updated = await repository.update(id, input);
+      const updated = await repository().update(id, input);
       this.records = this.records.map((record) =>
         record.id === id ? updated : record,
       );
@@ -116,7 +126,7 @@ export const useCafeStore = defineStore("cafe", {
     },
 
     async remove(id: number): Promise<void> {
-      await repository.remove(id);
+      await repository().remove(id);
       this.records = this.records.filter((record) => record.id !== id);
       if (this.selectedId === id) this.selectedId = null;
     },
@@ -150,18 +160,32 @@ export const useCafeStore = defineStore("cafe", {
 
     /** 백업 파일로 내보낼 현재 저장소 전체 */
     async exportBackup(): Promise<CafeBackup> {
-      return repository.exportAll();
+      return repository().exportAll();
     },
 
     async usedBytes(): Promise<number | null> {
-      return repository.usedBytes();
+      return repository().usedBytes();
     },
 
     /** 백업 가져오기 — 통째로 교체한다 */
     async importBackup(records: CafeRecord[]): Promise<void> {
-      this.records = await repository.replaceAll(records);
+      this.records = await repository().replaceAll(records);
       this.selectedId = null;
       this.error = null;
+    },
+
+    /** 백업 병합 — 기존 기록은 두고 파일의 새 카페만 붙인다 */
+    async mergeBackup(
+      records: CafeRecord[],
+    ): Promise<{ added: number; skipped: number }> {
+      const current = await repository().exportAll();
+      const merged = mergeRecords(current.records, records, current.nextId);
+      this.records = await repository().replaceAll(
+        merged.records,
+        merged.nextId,
+      );
+      this.error = null;
+      return { added: merged.added, skipped: merged.skipped };
     },
   },
 });

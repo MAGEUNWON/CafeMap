@@ -3,7 +3,7 @@ const props = withDefaults(
   defineProps<{
     label: string;
     modelValue: string;
-    type?: "text" | "date" | "search";
+    type?: "text" | "date" | "search" | "email" | "password";
     placeholder?: string;
     required?: boolean;
     error?: string;

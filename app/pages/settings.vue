@@ -6,6 +6,8 @@ import {
   saveBackupFile,
 } from "~/core/backup/file";
 import { BackupParseError, parseBackup } from "~/core/backup/schema";
+import { BACKEND_ENABLED } from "~/core/supabase";
+import { useAuthStore } from "~/stores/auth";
 import { useCafeStore } from "~/stores/cafe";
 import { useToastStore } from "~/stores/toast";
 import type { CafeRecord } from "~/types/cafe";
@@ -15,9 +17,30 @@ useHead({ title: "설정 — Cafe Pin" });
 
 const store = useCafeStore();
 const toast = useToastStore();
+const auth = useAuthStore();
+
+const signingOut = ref(false);
+
+async function onSignOut() {
+  if (signingOut.value) return;
+  signingOut.value = true;
+  try {
+    await auth.signOut();
+    // 다음 로그인(다른 계정일 수도)을 위해 메모리의 기록을 비운다
+    store.$reset();
+    await navigateTo("/login");
+  } catch (err) {
+    toast.error(err instanceof Error ? err.message : "로그아웃하지 못함");
+  } finally {
+    signingOut.value = false;
+  }
+}
 
 /** 사진까지 넣으면 5MB 근처에서 저장이 막힌다. 그 전에 알려준다. */
 const WARN_BYTES = 4 * 1024 * 1024;
+
+/** 브라우저 localStorage 한도 근사치 — 게이지의 분모로만 쓴다 */
+const LIMIT_BYTES = 5 * 1024 * 1024;
 
 const used = ref<number | null>(null);
 const exporting = ref(false);
@@ -34,10 +57,18 @@ interface Pending {
 }
 const pending = ref<Pending | null>(null);
 
+/** 가져오기 진행 단계 — choose: 병합/교체 선택, replace: 교체 최종 확인 */
+const step = ref<"choose" | "replace" | null>(null);
+
 const usedLabel = computed(() =>
   used.value === null ? "" : formatBytes(used.value),
 );
 const isTight = computed(() => used.value !== null && used.value >= WARN_BYTES);
+const usedPercent = computed(() =>
+  used.value === null
+    ? 0
+    : Math.min(100, Math.round((used.value / LIMIT_BYTES) * 100)),
+);
 
 async function refreshUsage() {
   used.value = await store.usedBytes();
@@ -82,12 +113,59 @@ async function onPickFile(event: Event) {
       return;
     }
     pending.value = { records: backup.records, dropped };
+    // 기존 기록이 없으면 병합=교체라 선택지가 무의미하다
+    step.value = store.records.length === 0 ? "replace" : "choose";
   } catch (err) {
     toast.error(
       err instanceof BackupParseError || err instanceof Error
         ? err.message
         : "파일을 읽지 못함",
     );
+  }
+}
+
+function cancelImport() {
+  pending.value = null;
+  step.value = null;
+}
+
+const chooseTitle = computed(() =>
+  pending.value ? `기록 ${pending.value.records.length}곳 가져오기` : "",
+);
+
+const chooseDescription = computed(() => {
+  const target = pending.value;
+  if (!target) return "";
+  const skipped =
+    target.dropped > 0 ? ` 형식이 맞지 않는 ${target.dropped}건은 제외됨.` : "";
+  return (
+    `합치면 지금 기록 ${store.records.length}곳은 그대로 두고 파일의 새 카페만 추가된다. ` +
+    `같은 카페(이름·방문일·위치가 같음)는 건너뜀.${skipped}`
+  );
+});
+
+async function onMerge() {
+  const target = pending.value;
+  if (!target || importing.value) return;
+
+  importing.value = true;
+  try {
+    const { added, skipped } = await store.mergeBackup(target.records);
+    await refreshUsage();
+    if (added === 0) {
+      toast.success("모두 이미 있는 기록임");
+    } else {
+      toast.success(
+        skipped > 0
+          ? `${added}곳 추가함 (중복 ${skipped}건 건너뜀)`
+          : `${added}곳 추가함`,
+      );
+    }
+    cancelImport();
+  } catch (err) {
+    toast.error(err instanceof Error ? err.message : "가져오지 못했음");
+  } finally {
+    importing.value = false;
   }
 }
 
@@ -119,7 +197,7 @@ async function onConfirmImport() {
         ? `${target.records.length}곳을 가져옴 (${target.dropped}건 건너뜀)`
         : `${target.records.length}곳을 가져옴`,
     );
-    pending.value = null;
+    cancelImport();
   } catch (err) {
     toast.error(err instanceof Error ? err.message : "가져오지 못했음");
   } finally {
@@ -139,6 +217,27 @@ async function onConfirmImport() {
         카페 {{ store.records.length }}곳
         <template v-if="usedLabel"> · 약 {{ usedLabel }} 사용 </template>
       </p>
+
+      <div
+        v-if="used !== null"
+        class="mt-3"
+        role="progressbar"
+        aria-label="저장 공간 사용량"
+        :aria-valuemin="0"
+        :aria-valuemax="100"
+        :aria-valuenow="usedPercent"
+      >
+        <div class="h-2 w-full overflow-hidden rounded-pill bg-sand-100">
+          <div
+            class="h-full rounded-pill transition-[width] duration-300 ease-soft"
+            :class="isTight ? 'bg-clay' : 'bg-moss'"
+            :style="{ width: `${usedPercent}%` }"
+          />
+        </div>
+        <p class="mt-1.5 text-caption text-index text-ink-faint">
+          약 5MB 기준 {{ usedPercent }}% 사용
+        </p>
+      </div>
 
       <p
         v-if="isTight"
@@ -210,12 +309,46 @@ async function onConfirmImport() {
       </div>
     </section>
 
+    <!-- 계정 — 백엔드 모드에서만 -->
+    <section v-if="BACKEND_ENABLED && auth.user" class="surface mt-4 p-5">
+      <h2 class="text-title-3 text-ink">계정</h2>
+      <p class="mt-1.5 text-body-2 text-ink-soft">{{ auth.user.email }}</p>
+      <UiButton
+        variant="outline"
+        class="mt-4"
+        :disabled="signingOut"
+        @click="onSignOut"
+      >
+        로그아웃
+      </UiButton>
+    </section>
+
+    <!-- 가져오기 방식 선택 — 기존 기록이 있을 때만 거친다 -->
+    <UiModal
+      :open="step === 'choose' && pending !== null"
+      :title="chooseTitle"
+      :description="chooseDescription"
+      @close="cancelImport"
+    >
+      <div class="flex flex-col gap-2">
+        <UiButton block :disabled="importing" @click="onMerge">
+          기존 기록에 합치기
+        </UiButton>
+        <UiButton variant="danger" block @click="step = 'replace'">
+          전부 교체하기
+        </UiButton>
+        <UiButton variant="outline" block @click="cancelImport">
+          취소
+        </UiButton>
+      </div>
+    </UiModal>
+
     <UiConfirmDialog
-      :open="pending !== null"
+      :open="step === 'replace' && pending !== null"
       title="기록을 바꿀까?"
       :description="confirmDescription"
       confirm-label="바꾸기"
-      @close="pending = null"
+      @close="cancelImport"
       @confirm="onConfirmImport"
     />
   </div>

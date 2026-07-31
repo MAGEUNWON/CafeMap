@@ -17,8 +17,12 @@ export interface CafeRepository {
   remove(id: number): Promise<void>;
   /** 백업 내보내기 */
   exportAll(): Promise<CafeBackup>;
-  /** 백업 가져오기 — 통째로 갈아끼운다 */
-  replaceAll(records: CafeRecord[]): Promise<CafeRecord[]>;
+  /**
+   * 백업 가져오기 — 통째로 갈아끼운다.
+   * nextId 를 주면 그 값을 저장한다(최소 nextIdOf(records) 보장) —
+   * 병합처럼 카운터가 목록의 최대 id 보다 앞서 있어야 하는 경우용.
+   */
+  replaceAll(records: CafeRecord[], nextId?: number): Promise<CafeRecord[]>;
   /**
    * 저장에 쓰고 있는 바이트 수. 한도가 있는 저장소에서만 뜻이 있다.
    * 백엔드 구현은 null 을 돌려주면 화면이 알아서 감춘다.

@@ -54,6 +54,10 @@ export default defineNuxtConfig({
       // NUXT_PUBLIC_KAKAO_MAP_KEY 로 주입. 카카오 JavaScript 키는 도메인 제한이
       // 걸려 있어 브라우저에 노출되는 게 정상이지만 레포에는 올리지 않는다.
       kakaoMapKey: "",
+      // NUXT_PUBLIC_SUPABASE_URL / NUXT_PUBLIC_SUPABASE_ANON_KEY 로 주입.
+      // anon key 도 브라우저 노출이 정상 — 데이터 방어선은 RLS 다.
+      supabaseUrl: "",
+      supabaseAnonKey: "",
     },
   },
 

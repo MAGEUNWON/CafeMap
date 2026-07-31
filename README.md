@@ -90,11 +90,19 @@ pages / components → stores/cafe.ts → repositories → localStorage
 
 ## 백엔드 붙일 때
 
-1. **기록 CRUD** — `app/repositories/apiCafeRepository.ts` 를 만들어 `CafeRepository` 를 구현하고,
-   `app/stores/cafe.ts` 최상단의 `const repository = createLocalStorageCafeRepository()` 한 줄만 교체한다.
-   메서드가 전부 `Promise` 라 스토어·화면 코드는 그대로 둔다.
-2. **사진** — 지금은 리사이즈한 data URL 을 기록에 함께 저장한다. 스토리지가 생기면
-   업로드 후 URL 만 `photoUrl` 에 넣도록 `PhotoUploader.vue` 를 바꾼다.
+Supabase 구현(`app/repositories/supabaseCafeRepository.ts`)과 로그인 화면·미들웨어는
+**이미 만들어져 있고**, `app/core/supabase.ts` 의 `BACKEND_ENABLED` 상수 하나로 켠다.
+
+켜기 전에 필요한 것 (사람 절차):
+
+1. supabase.com 에서 프로젝트 생성 (리전 Seoul) → `supabase/schema.sql` 을 SQL Editor 에서 실행
+2. Project Settings → API 의 URL·anon key 를 `.env` 와 Vercel 환경변수에
+   (`NUXT_PUBLIC_SUPABASE_URL`, `NUXT_PUBLIC_SUPABASE_ANON_KEY`) — 빌드 시점에 구워지므로 재배포 필요
+3. Authentication → URL Configuration 에 프로덕션 주소 등록 (가입 확인 메일 링크용)
+4. `BACKEND_ENABLED = true` 로 바꿔 배포 → 가입·로그인 → 설정에서 기존 백업 JSON 가져오기(병합)로 이관.
+   data URL 사진은 가져오는 과정에서 Storage 로 자동 업로드된다
+
+무료 티어의 7일 미사용 일시정지는 Vercel cron(`vercel.json` → `/api/keepalive`)이 막는다.
 
 ## 메모
 
