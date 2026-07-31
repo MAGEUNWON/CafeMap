@@ -55,7 +55,7 @@ const describedBy = computed(() => {
       :required="required"
       :aria-invalid="error ? true : undefined"
       :aria-describedby="describedBy"
-      class="h-12 w-full rounded-field border bg-paper px-4 text-body-1 text-ink transition-colors duration-150 ease-soft placeholder:text-ink-faint"
+      class="h-12 w-full rounded-field border bg-paper px-4 text-input text-ink transition-colors duration-150 ease-soft placeholder:text-ink-faint"
       :class="error ? 'border-clay' : 'border-line hover:border-ink-faint'"
       @input="
         emit('update:modelValue', ($event.target as HTMLInputElement).value)

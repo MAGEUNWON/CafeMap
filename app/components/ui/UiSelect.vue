@@ -36,7 +36,7 @@ const id = useId();
       <select
         :id="id"
         :value="modelValue"
-        class="h-10 w-full appearance-none rounded-pill border border-line bg-paper pl-4 pr-9 text-label text-ink transition-colors duration-150 ease-soft hover:border-ink-faint"
+        class="h-10 w-full appearance-none rounded-pill border border-line bg-paper pl-4 pr-9 text-input font-medium text-ink transition-colors duration-150 ease-soft hover:border-ink-faint"
         @change="
           emit('update:modelValue', ($event.target as HTMLSelectElement).value)
         "

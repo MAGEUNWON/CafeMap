@@ -29,7 +29,7 @@ const id = useId();
       :placeholder="placeholder"
       :rows="rows"
       :maxlength="maxlength"
-      class="w-full resize-none rounded-field border border-line bg-paper px-4 py-3 text-body-1 text-ink transition-colors duration-150 ease-soft placeholder:text-ink-faint hover:border-ink-faint"
+      class="w-full resize-none rounded-field border border-line bg-paper px-4 py-3 text-input text-ink transition-colors duration-150 ease-soft placeholder:text-ink-faint hover:border-ink-faint"
       @input="
         emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)
       "

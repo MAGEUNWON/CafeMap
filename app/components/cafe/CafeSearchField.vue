@@ -29,7 +29,7 @@ const id = useId();
         type="search"
         :value="modelValue"
         :placeholder="placeholder"
-        class="h-12 w-full rounded-pill border border-line bg-paper pl-11 pr-11 text-body-1 text-ink transition-colors duration-150 ease-soft placeholder:text-ink-faint hover:border-ink-faint"
+        class="h-12 w-full rounded-pill border border-line bg-paper pl-11 pr-11 text-input text-ink transition-colors duration-150 ease-soft placeholder:text-ink-faint hover:border-ink-faint"
         @input="
           emit('update:modelValue', ($event.target as HTMLInputElement).value)
         "

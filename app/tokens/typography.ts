@@ -51,6 +51,11 @@ export const tailwindFontSize: Record<string, FontSizeEntry> = {
     "0.9375rem",
     { lineHeight: "1.65", letterSpacing: "-0.01em", fontWeight: "400" },
   ],
+  /** 폼 컨트롤 전용 — iOS 는 16px 미만 입력창에 포커스하면 화면을 확대해버린다 */
+  input: [
+    "1rem",
+    { lineHeight: "1.5", letterSpacing: "-0.01em", fontWeight: "400" },
+  ],
   /** 보조 본문 */
   "body-2": [
     "0.875rem",

@@ -164,7 +164,7 @@ onBeforeUnmount(() => {
         :aria-activedescendant="
           activeIndex >= 0 ? `${id}-option-${activeIndex}` : undefined
         "
-        class="h-12 w-full rounded-field border bg-paper pl-11 pr-4 text-body-1 text-ink transition-colors duration-150 ease-soft placeholder:text-ink-faint"
+        class="h-12 w-full rounded-field border bg-paper pl-11 pr-4 text-input text-ink transition-colors duration-150 ease-soft placeholder:text-ink-faint"
         :class="error ? 'border-clay' : 'border-line hover:border-ink-faint'"
         @input="onInput"
         @focus="isOpen = true"
