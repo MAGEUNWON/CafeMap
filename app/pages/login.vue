@@ -13,6 +13,7 @@ const mode = ref<"signIn" | "signUp">("signIn");
 const email = ref("");
 const password = ref("");
 const submitting = ref(false);
+const sendingReset = ref(false);
 
 /** 가입 직후 — 확인 메일 안내를 지속적으로 보여준다 */
 const signedUp = ref(false);
@@ -56,6 +57,23 @@ async function onSubmit() {
     submitting.value = false;
   }
 }
+
+async function onForgotPassword() {
+  if (sendingReset.value) return;
+  if (!email.value.trim()) {
+    toast.error("이메일을 먼저 입력하면 재설정 링크를 보내줌");
+    return;
+  }
+  sendingReset.value = true;
+  try {
+    await auth.resetPassword(email.value.trim());
+    toast.success("재설정 메일을 보냈음. 메일함(스팸함 포함) 확인");
+  } catch (err) {
+    toast.error(err instanceof Error ? err.message : "메일을 보내지 못함");
+  } finally {
+    sendingReset.value = false;
+  }
+}
 </script>
 
 <template>
@@ -94,17 +112,29 @@ async function onSubmit() {
         </UiButton>
       </form>
 
-      <button
-        type="button"
-        class="mt-5 text-label text-ink-soft underline-offset-4 transition-colors duration-150 ease-soft hover:text-ink hover:underline"
-        @click="switchMode"
-      >
-        {{
-          mode === "signIn"
-            ? "처음이면 계정 만들기"
-            : "이미 계정이 있으면 로그인"
-        }}
-      </button>
+      <div class="mt-5 flex flex-col items-start gap-2.5">
+        <button
+          type="button"
+          class="text-label text-ink-soft underline-offset-4 transition-colors duration-150 ease-soft hover:text-ink hover:underline"
+          @click="switchMode"
+        >
+          {{
+            mode === "signIn"
+              ? "처음이면 계정 만들기"
+              : "이미 계정이 있으면 로그인"
+          }}
+        </button>
+
+        <button
+          v-if="mode === 'signIn'"
+          type="button"
+          class="text-label text-ink-faint underline-offset-4 transition-colors duration-150 ease-soft hover:text-ink hover:underline"
+          :disabled="sendingReset"
+          @click="onForgotPassword"
+        >
+          비밀번호를 잊었어요
+        </button>
+      </div>
     </div>
   </div>
 </template>

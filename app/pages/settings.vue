@@ -20,6 +20,26 @@ const toast = useToastStore();
 const auth = useAuthStore();
 
 const signingOut = ref(false);
+const newPassword = ref("");
+const changingPassword = ref(false);
+
+async function onChangePassword() {
+  if (changingPassword.value) return;
+  if (newPassword.value.length < 6) {
+    toast.error("비밀번호는 6자 이상이어야 함");
+    return;
+  }
+  changingPassword.value = true;
+  try {
+    await auth.updatePassword(newPassword.value);
+    newPassword.value = "";
+    toast.success("비밀번호를 바꿨음");
+  } catch (err) {
+    toast.error(err instanceof Error ? err.message : "바꾸지 못함");
+  } finally {
+    changingPassword.value = false;
+  }
+}
 
 async function onSignOut() {
   if (signingOut.value) return;
@@ -313,6 +333,30 @@ async function onConfirmImport() {
     <section v-if="BACKEND_ENABLED && auth.user" class="surface mt-4 p-5">
       <h2 class="text-title-3 text-ink">계정</h2>
       <p class="mt-1.5 text-body-2 text-ink-soft">{{ auth.user.email }}</p>
+
+      <form
+        class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-start"
+        @submit.prevent="onChangePassword"
+      >
+        <div class="flex-1">
+          <UiTextField
+            v-model="newPassword"
+            label="새 비밀번호"
+            type="password"
+            hint="6자 이상"
+            hide-label
+            placeholder="새 비밀번호 (6자 이상)"
+          />
+        </div>
+        <UiButton
+          type="submit"
+          variant="outline"
+          :disabled="changingPassword || newPassword.length === 0"
+        >
+          비밀번호 변경
+        </UiButton>
+      </form>
+
       <UiButton
         variant="outline"
         class="mt-4"

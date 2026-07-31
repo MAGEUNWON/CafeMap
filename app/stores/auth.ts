@@ -59,6 +59,20 @@ export const useAuthStore = defineStore("auth", {
       const { error } = await getSupabase().auth.signOut();
       if (error) throw new Error("로그아웃하지 못함");
     },
+
+    /** 로그인(또는 재설정 링크로 만든 세션) 상태에서 비밀번호 교체 */
+    async updatePassword(password: string): Promise<void> {
+      const { error } = await getSupabase().auth.updateUser({ password });
+      if (error) throw new Error(loginErrorMessage(error.message));
+    },
+
+    /** 재설정 링크 메일 발송 — 링크는 /reset 으로 돌아온다 */
+    async resetPassword(email: string): Promise<void> {
+      const { error } = await getSupabase().auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset`,
+      });
+      if (error) throw new Error(loginErrorMessage(error.message));
+    },
   },
 });
 
@@ -79,6 +93,9 @@ function loginErrorMessage(raw: string): string {
   }
   if (message.includes("rate limit")) {
     return "잠시 뒤에 다시 시도";
+  }
+  if (message.includes("different from the old")) {
+    return "지금 쓰는 비밀번호와 달라야 함";
   }
   return "로그인에 실패함";
 }
